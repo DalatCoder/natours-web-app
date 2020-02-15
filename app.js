@@ -9,6 +9,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const tourRoute = require('./routes/tourRoutes');
 const userRoute = require('./routes/userRoutes');
@@ -31,6 +32,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // GLOBAL MIDDLEWARE
+// Implement CORS | Allow everyone for consume API
+app.use(cors());
+
+// Implement CORS for complex request (PUT PATCH DELETE)
+app.options('*', cors());
+
 // Set security HTTP headers
 app.use(helmet());
 
