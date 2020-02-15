@@ -21,6 +21,9 @@ const parameterWhilelist = require('./utils/parameterWhilelist');
 
 const app = express();
 
+// Trust proxy for setting secure cookies on heroku
+app.enable('trust proxy');
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 

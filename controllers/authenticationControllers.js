@@ -19,16 +19,16 @@ const signJWT = async userID => {
   );
 };
 
-const createAndSendToken = async (user, statusCode, res) => {
+const createAndSendToken = async (user, statusCode, req, res) => {
   const token = await signJWT(user.id);
 
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_TIME * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true
+    httpOnly: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
   };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   // Send cookie along with token
   res.cookie('jwt', token, cookieOptions);
@@ -56,7 +56,7 @@ exports.signup = asyncMiddlewareFunctionExceptionHandler(async (req, res) => {
   ]);
   const newUser = await User.create(filteredBody);
 
-  await createAndSendToken(newUser, 201, res);
+  await createAndSendToken(newUser, 201, req, res);
 
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome();
@@ -73,7 +73,7 @@ exports.login = asyncMiddlewareFunctionExceptionHandler(async (req, res) => {
   const isCorrect = await user.isCorrectPassword(password, user.password);
   if (!isCorrect) throw new AppError(`Incorrect email or password`, 401);
 
-  await createAndSendToken(user, 200, res);
+  await createAndSendToken(user, 200, req, res);
 });
 
 // AUTHENTICATION
@@ -208,7 +208,7 @@ exports.resetPassword = asyncMiddlewareFunctionExceptionHandler(
     // Auto using pre 'save' hook
 
     // 4) Log the user in, send JWT
-    await createAndSendToken(user, 200, res);
+    await createAndSendToken(user, 200, req, res);
   }
 );
 
@@ -232,7 +232,7 @@ exports.updatePassword = asyncMiddlewareFunctionExceptionHandler(
     await user.save();
 
     // 4) Log user in, send JWT
-    await createAndSendToken(user, 200, res);
+    await createAndSendToken(user, 200, req, res);
   }
 );
 
