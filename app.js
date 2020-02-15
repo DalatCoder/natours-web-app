@@ -8,6 +8,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const tourRoute = require('./routes/tourRoutes');
 const userRoute = require('./routes/userRoutes');
@@ -57,6 +58,9 @@ app.use(xss());
 
 // Prevent parameter pollution
 app.use(hpp({ whitelist: parameterWhilelist }));
+
+// Compress response data (only for text: JSON)
+app.use(compression());
 
 app.use('/', viewRoute);
 app.use('/api/v1/tours', tourRoute);

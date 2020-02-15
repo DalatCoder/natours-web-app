@@ -83,7 +83,6 @@ reviewSchema.pre(/^findOneAnd/, async function(next) {
   // in post 'findOneAnd' hook after all changed review data has been saved
   // to calculate rating average and rating quantity
   this.currentReview = await this.findOne();
-  console.log(this.currentReview);
 
   next();
 });

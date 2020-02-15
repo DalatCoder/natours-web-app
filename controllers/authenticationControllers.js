@@ -182,7 +182,6 @@ exports.forgotPassword = asyncMiddlewareFunctionExceptionHandler(
 
 exports.resetPassword = asyncMiddlewareFunctionExceptionHandler(
   async (req, res) => {
-    console.log(req.body);
     // 1) Get user base on the reset password token
     const rawResetToken = req.params.resetPasswordToken;
 

@@ -29,8 +29,6 @@ exports.uploadTourImages = upload.fields([
 
 exports.resizeTourImages = asyncMiddlewareExceptionHandler(
   async (req, res, next) => {
-    console.log(req.files);
-
     if (!req.files.imageCover || !req.files.images) return next();
 
     // 1) Cover image
@@ -58,8 +56,6 @@ exports.resizeTourImages = asyncMiddlewareExceptionHandler(
         req.body.images.push(filename);
       })
     );
-
-    console.log(req.body);
 
     next();
   }
