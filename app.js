@@ -15,6 +15,7 @@ const tourRoute = require('./routes/tourRoutes');
 const userRoute = require('./routes/userRoutes');
 const reviewRoute = require('./routes/reviewRoutes');
 const bookingRoute = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 const viewRoute = require('./routes/viewRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -53,6 +54,10 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again in an hour!'
 });
 app.use('/api', limiter);
+
+// Implement webhook checkout for successful payment
+// Its data can't be parsed to JSON, so we must put it here, above JSON middleware
+app.post('/webhook-checkout', express.raw(), bookingController.webhookCheckout);
 
 // Body-parser, reading data from body into req.body
 // If the body data larger than 10kb, then it ignore that data
