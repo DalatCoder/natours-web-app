@@ -10,6 +10,7 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const tourRoute = require('./routes/tourRoutes');
 const userRoute = require('./routes/userRoutes');
@@ -57,7 +58,11 @@ app.use('/api', limiter);
 
 // Implement webhook checkout for successful payment
 // Its data can't be parsed to JSON, so we must put it here, above JSON middleware
-app.post('/webhook-checkout', express.raw(), bookingController.webhookCheckout);
+app.post(
+  '/webhook-checkout',
+  bodyParser.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 // Body-parser, reading data from body into req.body
 // If the body data larger than 10kb, then it ignore that data
